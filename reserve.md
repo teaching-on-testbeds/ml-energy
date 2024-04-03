@@ -162,7 +162,7 @@ node.run('nvcc --version')
 :::
 
 :::{.cell}
-## Instal Python packages
+## Install Python packages
 :::
 
 :::{.cell .code}
