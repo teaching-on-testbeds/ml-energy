@@ -126,6 +126,8 @@ node.run('sudo apt update')
 node.run('sudo apt -y install python3-pip python3-dev')
 node.run('sudo pip3 install --upgrade pip')
 node.run('sudo apt -y install libcudnn8=8.9.6.50-1+cuda12.2') #Installing appropriate version of cudnn for the installed drivers
+node.run('sudo apt -y install pandoc')
+node.run('sudo apt -y install ffmpeg')
 ```
 :::
 
@@ -172,7 +174,9 @@ node.run('python3 -m pip install --user numpy')
 node.run('python3 -m pip install --user matplotlib')
 node.run('python3 -m pip install --user seaborn')
 node.run('python3 -m pip install --user librosa')
-node.run('python3 -m pip install --user zeus')
+node.run('python3 -m pip install --user zeus-ml==0.8.2')
+node.run('python3 -m pip install --user torch torchvision torchaudio')
+node.run('python3 -m pip install --user pydot')
 ```
 :::
 
@@ -184,6 +188,18 @@ Test your installation - make sure Tensorflow can see the GPU:
 :::{.cell .code}
 ```
 node.run('python3 -c \'import tensorflow as tf; print(tf.config.list_physical_devices("GPU"))\'')
+# should say: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+```
+:::
+
+:::{.cell}
+Now make sure torch can see the GPU:
+:::
+
+:::{.cell .code}
+```
+node.run('python3 -c \'import torch; print(torch.cuda.get_device_name(0))\'')
+# should say: Quadro RTX 6000
 ```
 :::
 
