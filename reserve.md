@@ -22,7 +22,7 @@ import chi, os, time
 from chi import lease
 from chi import server
 
-PROJECT_NAME = "CHI-231095" # change this if you need to
+PROJECT_NAME = os.getenv('OS_PROJECT_NAME') # change this if you need to
 chi.use_site("CHI@UC")
 chi.set("project_name", PROJECT_NAME)
 username = os.getenv('USER') # all exp resources will have this prefix
@@ -125,9 +125,9 @@ node = ssh.Remote(reserved_fip)
 node.run('sudo apt update')
 node.run('sudo apt -y install python3-pip python3-dev')
 node.run('sudo pip3 install --upgrade pip')
-node.run('sudo apt -y install libcudnn8=8.9.6.50-1+cuda12.2') #Installing appropriate version of cudnn for the installed drivers
+node.run('sudo apt -y install libcudnn8=8.9.6.50-1+cuda12.2') #Installing libcudnn8=8.9.6.50-1+cuda12.2 because it is the most recent one supported by TF-2.16.1
 node.run('sudo apt -y install pandoc')
-node.run('sudo apt -y install ffmpeg')
+node.run('sudo apt -y install ffmpeg=7:4.4.2-0ubuntu0.22.04.1')
 ```
 :::
 
@@ -169,14 +169,14 @@ node.run('nvcc --version')
 
 :::{.cell .code}
 ```
-node.run('python3 -m pip install --user tensorflow[and-cuda]')
-node.run('python3 -m pip install --user numpy')
-node.run('python3 -m pip install --user matplotlib')
-node.run('python3 -m pip install --user seaborn')
-node.run('python3 -m pip install --user librosa')
+node.run('python3 -m pip install --user tensorflow[and-cuda]==2.16.1')
+node.run('python3 -m pip install --user numpy==1.26.4')
+node.run('python3 -m pip install --user matplotlib==3.8.4')
+node.run('python3 -m pip install --user seaborn==0.13.2')
+node.run('python3 -m pip install --user librosa==0.10.1')
 node.run('python3 -m pip install --user zeus-ml==0.8.2')
-node.run('python3 -m pip install --user torch torchvision torchaudio')
-node.run('python3 -m pip install --user pydot')
+node.run('python3 -m pip install --user torch==2.2.2 torchvision==0.17.2 torchaudio==-2.2.2')
+node.run('python3 -m pip install --user pydot==2.0.0')
 ```
 :::
 
@@ -215,6 +215,19 @@ node.run('python3 -m pip install --user  jupyter-core jupyter-client jupyter -U 
 ```
 :::
 
+
+:::{.cell}
+## Retrieve the materials
+
+Finally, get a copy of the notebooks that you will run:
+:::
+
+:::{.cell .code}
+```
+node.run('git clone https://github.com/teaching-on-testbeds/ml-energy.git')
+```
+:::
+
 :::{.cell}
 ## Run a JupyterHub server
 
@@ -248,7 +261,7 @@ Then, run the following cell, which will start a command that does not terminate
 
 :::{.cell .code}
 ```
-node.run("/home/cc/.local/bin/jupyter notebook --port=8888 --notebook-dir='/home/cc/'")
+node.run("/home/cc/.local/bin/jupyter notebook --port=8888 --notebook-dir='/home/cc/ml-energy/notebooks/'")
 ```
 :::
 
@@ -262,6 +275,15 @@ If you need to stop and re-start your Jupyter server,
 
 * Use Kernel > Interrupt Kernel twice to stop the cell above
 * Then run the following cell to kill whatever may be left running in the background.
+
+Note: If the message 
+`The port 8888 is already in use, trying another port.` appears in the output of the above cell, it implies that the local port 8888 is busy i.e. being used by someother process. Note the port the notebook was launched at. `localhost:XXXX`, XXXX is the port of interest. 
+
+Quit the ssh running on the local machine from the cell above and replace it with
+
+```python
+ssh -L 127.0.0.1:8888:127.0.0.1:XXXX -i <SSH_KEYPATH> cc@<RESERVED_FIP>
+```
 :::
 
 :::{.cell .code}
