@@ -1,11 +1,11 @@
 :::{.cell}
 ## Building a Neural Network Classifier
 
-Following the example in the demos you have seen, clear the keras session. Then, create a neural network `model` with:
+Create a neural network `model` with:
 
 -   `nh=256` hidden units in a single dense hidden layer
 -   `sigmoid` activation at hidden units
--   select the input and output shapes, and output activation, according to the problem requirements. Use the variables you defined earlier (`n_tr`, `n_ts`, `n_feat`, `n_class`) as applicable, rather than hard-coding numbers.
+-   select the input and output shapes, and output activation, according to the problem requirements.
 :::
 
 :::{.cell .code}
@@ -14,7 +14,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
-import time
 %matplotlib inline
 ```
 :::
