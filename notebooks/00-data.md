@@ -116,7 +116,7 @@ To retrieve their data, visit
 
 and note the password listed on that page. Click on the link for “Instrument Dataset”, enter the password, click on `instrument_dataset` to open the folder, and download it. (You can “direct download” straight from this site, you don’t need a Dropbox account.) Depending on your laptop OS and on how you download the data, you may need to “unzip” or otherwise extract the four `.npy` files from an archive.
 
-Now create a new folder (named `instrument_dataset`) on the Chameleon server for store the dataset.
+Now create a new folder (named `instrument_dataset`) on the Chameleon server for storing the dataset.
 :::
 
 :::{.cell .code}
