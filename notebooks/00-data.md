@@ -1,16 +1,6 @@
 :::{.cell}
-# Assignment: Neural Networks for Music Classification
+# Load data for music classification
 
-*Fraida Fund*
-
-**TODO**: Edit this cell to fill in your NYU Net ID and your name:
-
--   **Net ID**:
--   **Name**:
-:::
-
-
-:::{.cell}
 **Note**: This experiment is designed to run on a Chameleon **GPU** runtime. You should use a GPU runtime launched on the Chameleon server to work on this assignment. Refer to the `reserve.ipynb` notebook for instructions on how to reserve resources and launch an instance on the Chameleon server.
 
 In this assignment, we will look at an audio classification problem. Given a sample of music, we want to determine which instrument (e.g. trumpet, violin, piano) is playing.
@@ -21,12 +11,9 @@ In this assignment, we will look at an audio classification problem. Given a sam
 
 :::{.cell .code}
 ```
-import tensorflow as tf
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-import seaborn as sns
-import time
 %matplotlib inline
 ```
 :::
@@ -129,9 +116,19 @@ To retrieve their data, visit
 
 and note the password listed on that page. Click on the link for “Instrument Dataset”, enter the password, click on `instrument_dataset` to open the folder, and download it. (You can “direct download” straight from this site, you don’t need a Dropbox account.) Depending on your laptop OS and on how you download the data, you may need to “unzip” or otherwise extract the four `.npy` files from an archive.
 
-Then, upload the files to your Google Colab storage: click on the folder icon on the left to see your storage, if it isn’t already open, and then click on “Upload”.
+Now create a new folder (named `instrument_dataset`) on the Chameleon server for store the dataset.
+:::
 
-🛑 Wait until *all* uploads have completed and the orange “circles” indicating uploads in progress are *gone*. (The training data especially will take some time to upload.) 🛑
+:::{.cell .code}
+```
+!mkdir instrument_dataset/
+```
+:::
+
+:::{.cell}
+Then, upload the files to Chamelen server inside the `instrument_dataset` folder: click on the folder icon on the left to see your storage, if it isn’t already open, and then click on “Upload”.
+
+🛑 Wait until *all* uploads have completed and the "Last Modified" attribute of the file *stops updating* indicating uploads in progress are *complete*. (The training data especially will take some time to upload.) 🛑
 :::
 
 :::{.cell}
@@ -185,7 +182,7 @@ print("Num classes=  %d" % n_class)
 ```
 # shuffle the training set
 # (when loaded in, samples are ordered by class)
-p = np.random.permutation(n_tr)
+p = np.random.permutation(Xtr.shape[0])
 Xtr = Xtr[p,:]
 ytr = ytr[p]
 ```
