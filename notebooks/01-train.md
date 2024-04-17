@@ -100,7 +100,7 @@ Use a batch size of 128. Your final accuracy should be greater than 99%.
 # TODO - fit model and save training history
 n_epochs = 10
 
-hist = model.fit()
+hist = 
 ```
 :::
 
