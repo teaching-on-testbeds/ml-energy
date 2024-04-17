@@ -83,10 +83,7 @@ Create an optimizer and compile the model. Select the appropriate loss function 
 :::{.cell .code}
 ```
 # TODO - create optimizer and compile the model
-opt = 
-loss_fn = 
 
-model.compile()
 ```
 :::
 
