@@ -163,7 +163,7 @@ Note that since we are now using the validation set performance to *decide* when
 :::{.cell}
 ### See how TTA/ETA varies with learning rate, batch size
 
-Now, you will repeat your model preparation and fitting code - with your new `TrainToAccuracy` callback - but in a loop. First, you will iterate over different learning rates. Consider the following learning rates for this experiment.
+Now, you will repeat your model preparation and fitting code - with your new `TrainToAccuracy` callback - but in a loop. First, you will iterate over different learning rates. Use a fixed batch size of 128, but consider the following learning rates for this experiment.
 
 ```python
 [0.0001, 0.001, 0.01, 0.1]
@@ -250,7 +250,7 @@ Create a figure with four subplots. In each subplot, create a bar plot with lear
 :::
 
 :::{.cell}
-Now, you will repeat, with a loop over different batch sizes. Consider the following batch sizes - 
+Now, you will repeat, with a loop over different batch sizes. Use a fixed learning rate of 0.001, but consider the following batch sizes - 
 
 ```python
 [64, 128, 256, 512, 1024, 2048, 4096, 8192]
@@ -263,7 +263,6 @@ Now, you will repeat, with a loop over different batch sizes. Consider the follo
 
 # default learning rate and batch size -
 lr = 0.001
-batch_size = 128
 metrics_vs_bs = []
 
 for batch_size in [64, 128, 256, 512, 1024, 2048, 4096, 8192]:
