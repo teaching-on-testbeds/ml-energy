@@ -8,5 +8,7 @@ Procedure: First, you'll run the `reserve.ipynb` notebook to bring up a resour
 
 **Attribution**: The audio classification material is based on an assignment by Sundeep Rangan, from his [IntroML GitHub repo](https://github.com/sdrangan/introml/). 
 
+This material is based upon work supported by the National Science Foundation under Grant No. 2230079 and Grant No. 2226408.
+
 ---
 
