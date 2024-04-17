@@ -116,7 +116,7 @@ To retrieve their data, visit
 
 and note the password listed on that page. Click on the link for “Instrument Dataset”, enter the password, click on `instrument_dataset` to open the folder, and download it. (You can “direct download” straight from this site, you don’t need a Dropbox account.) Depending on your laptop OS and on how you download the data, you may need to “unzip” or otherwise extract the four `.npy` files from an archive.
 
-Now create a new folder (named `instrument_dataset`) on the Chameleon server for storing the dataset.
+Now create a new folder (named `instrument_dataset`) on the server for storing the dataset.
 :::
 
 :::{.cell .code}
@@ -126,7 +126,7 @@ Now create a new folder (named `instrument_dataset`) on the Chameleon server for
 :::
 
 :::{.cell}
-Then, upload the files to Chameleon server inside the `instrument_dataset` folder: click on the folder icon on the left to see your storage, if it isn’t already open, and then click on “Upload”.
+Then, upload the files to the server inside the `instrument_dataset` folder: click on the folder icon on the left to see your storage, if it isn’t already open, and then click on “Upload”.
 
 🛑 Wait until *all* uploads have completed. To check if all the files have been uploaded successfully, check the size of the `instrument_dataset` on the server using the following cell. If all uploads are successful, the folder size should be 75M. 🛑
 :::
