@@ -1,11 +1,5 @@
 :::{.cell}
 ## Building a Neural Network Classifier
-
-Create a neural network `model` with:
-
--   `nh=256` hidden units in a single dense hidden layer
--   `sigmoid` activation at hidden units
--   select the input and output shapes, and output activation, according to the problem requirements.
 :::
 
 :::{.cell .code}
@@ -48,14 +42,19 @@ import tensorflow.keras.backend as K
 ```
 :::
 
+:::{.cell}
+Create a neural network `model` with:
+
+-   `nh=256` hidden units in a single dense hidden layer
+-   `sigmoid` activation at hidden units
+-   select the input and output shapes, and output activation, according to the problem requirements.
+:::
+
 :::{.cell .code}
 ```
 # TODO - construct the model
 nh = 256
 model = Sequential()
-model.add(Input(Xtr_scale.shape[1],))
-model.add(Dense(nh, activation = 'sigmoid'))
-model.add(Dense(len(np.unique(ytr)), activation = 'softmax'))
 ```
 :::
 
@@ -84,15 +83,15 @@ Create an optimizer and compile the model. Select the appropriate loss function 
 :::{.cell .code}
 ```
 # TODO - create optimizer and compile the model
-opt = optimizers.Adam(learning_rate=0.001)
-loss_fn = tf.keras.losses.SparseCategoricalCrossentropy()
+opt = 
+loss_fn = 
 
-model.compile(optimizer = opt, loss = loss_fn, metrics = ['accuracy'])
+model.compile()
 ```
 :::
 
 :::{.cell}
-Fit the model for 10 epochs using the scaled data for both training and validation, and save the training history in \`hist.
+Fit the model for 10 epochs using the scaled data for both training and validation, and save the training history in \`hist\`.
 
 Use the `validation_data` option to pass the *test* data. (This is OK because we are not going to use this data as part of the training process, such as for early stopping - we’re just going to compute the accuracy on the data so that we can see how training and test loss changes as the model is trained.)
 
@@ -104,7 +103,7 @@ Use a batch size of 128. Your final accuracy should be greater than 99%.
 # TODO - fit model and save training history
 n_epochs = 10
 
-hist = model.fit(Xtr_scale,ytr, batch_size = 128, epochs = 10, validation_data=(Xts_scale, yts))
+hist = model.fit()
 ```
 :::
 
@@ -117,16 +116,6 @@ Make sure to label each axis, and each series (training vs. validation/test).
 :::{.cell .code}
 ```
 # TODO - plot the training and validation accuracy in one plot
-plt.figure(figsize=(5,3))
-
-train_acc = hist.history['accuracy'];
-val_acc = hist.history['val_accuracy'];
-
-nepochs = len(train_acc);
-plt1 = sns.lineplot(x=np.arange(1,nepochs+1), y=train_acc, label='Training accuracy');
-plt2 = sns.lineplot(x=np.arange(1,nepochs+1), y=val_acc, label='Validation accuracy');
-xlab = plt.xlabel('Epoch');
-ylab = plt.ylabel('Accuracy')
 ```
 :::
 
@@ -139,16 +128,5 @@ Make sure to label each axis, and each series (training vs. validation/test).
 :::{.cell .code}
 ```
 # TODO - plot the training and validation loss in one plot
-plt.figure(figsize=(5,3))
-
-train_loss = hist.history['loss'];
-val_loss = hist.history['val_loss'];
-
-nepochs = len(train_acc);
-plt1 = plt.semilogy(np.arange(1,nepochs+1), train_loss, label='Training loss');
-plt2 = plt.semilogy(np.arange(1,nepochs+1), val_loss, label='Validation loss');
-xlab = plt.xlabel('Epoch')
-ylab = plt.ylabel('Loss')
-lgnd = plt.legend()
 ```
 :::

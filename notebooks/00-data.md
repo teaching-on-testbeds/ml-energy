@@ -1,7 +1,7 @@
 :::{.cell}
 # Load data for music classification
 
-**Note**: This experiment is designed to run on a Chameleon **GPU** runtime. You should use a GPU runtime launched on the Chameleon server to work on this assignment. Refer to the `reserve.ipynb` notebook for instructions on how to reserve resources and launch an instance on the Chameleon server.
+**Note**: This experiment is designed to run on a GPU runtime.
 
 In this assignment, we will look at an audio classification problem. Given a sample of music, we want to determine which instrument (e.g. trumpet, violin, piano) is playing.
 
@@ -126,9 +126,15 @@ Now create a new folder (named `instrument_dataset`) on the Chameleon server for
 :::
 
 :::{.cell}
-Then, upload the files to Chamelen server inside the `instrument_dataset` folder: click on the folder icon on the left to see your storage, if it isn’t already open, and then click on “Upload”.
+Then, upload the files to Chameleon server inside the `instrument_dataset` folder: click on the folder icon on the left to see your storage, if it isn’t already open, and then click on “Upload”.
 
-🛑 Wait until *all* uploads have completed and the "Last Modified" attribute of the file *stops updating* indicating uploads in progress are *complete*. (The training data especially will take some time to upload.) 🛑
+🛑 Wait until *all* uploads have completed. To check if all the files have been uploaded successfully, check the size of the `instrument_dataset` on the server using the following cell. If all uploads are successful, the folder size should be 75M. 🛑
+:::
+
+:::{.cell .code}
+```
+!du -sh instrument_dataset
+```
 :::
 
 :::{.cell}
@@ -159,10 +165,10 @@ Write some code to find these values and print them.
 ```
 # TODO -  get basic details of the data
 # compute these values from the data, don't hard-code them
-n_tr    = Xtr.shape[0]
-n_ts    = Xts.shape[0]
-n_feat  = Xtr.shape[1]
-n_class = len(np.unique(ytr))
+n_tr    = 
+n_ts    = 
+n_feat  = 
+n_class = 
 ```
 :::
 
@@ -191,7 +197,7 @@ ytr = ytr[p]
 :::{.cell}
 Then, standardize the training and test data, `Xtr` and `Xts`, by removing the mean of each feature and scaling to unit variance.
 
-You can do this manually, or using `sklearn`'s [StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html). (For an example showing how to use a `StandardScaler`, you can refer to the notebook on regularization.)
+You can do this manually, or using `sklearn`'s [StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html).
 
 Although you will scale both the training and test data, you should make sure that both are scaled according to the mean and variance statistics from the *training data only*.
 
@@ -214,8 +220,8 @@ scaler = StandardScaler()
 :::{.cell .code}
 ```
 # TODO - Standardize the training and test data
-Xtr_scale = scaler.fit_transform(Xtr)
-Xts_scale = scaler.transform(Xts)
+Xtr_scale = 
+Xts_scale = 
 ```
 :::
 

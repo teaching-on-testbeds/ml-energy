@@ -1,6 +1,6 @@
 :::{.cell}
 ## Energy and time to train a neural network
-In the previous notebook, we trained a model to classify music. Now, we’ll explore what happens when we vary the training hyperparameters, but train each model to the same validation **accuracy target**. We will consider:
+In the previous notebook, we trained a model with a specific learning rate and batch size. However, the choice of training hyperparameters can have a substantial impact on the time and energy it takes to train our model. In this notebook, we will train a series of models all to the same validation accuracy "target", but with different training hyperparameters. For each model, we will consider:
 
 -   how much *time* it takes to achieve that accuracy target (“time to accuracy”)
 -   how much *energy* it takes to achieve that accuracy target (“energy to accuracy”)
@@ -57,7 +57,17 @@ To do this, first we will need some way to measure the energy used to train the 
 :::
 
 :::{.cell}
-Import the zeus-ml package, and tell it to monitor your GPU:
+Install the zeus-ml package, we will be using this package to measure energy comsumption of the GPU
+:::
+
+:::{.cell .code}
+```
+!pip install zeus==0.8.2
+```
+:::
+
+:::{.cell}
+Import the zeus-ml package, start an instance of a monitor, specifying the GPU that it should monitor
 :::
 
 
@@ -79,7 +89,7 @@ When you want to measure GPU energy usage, you will:
 
 and then you can get the time and total energy used by the GPU in the monitoring window.
 
-Try it now - this will just continue fitting whatever `model` is currently in scope from previous cells:
+Try it now :
 :::
 
 :::{.cell .code}
@@ -93,7 +103,11 @@ opt = optimizers.Adam(learning_rate=0.001)
 loss_fn = tf.keras.losses.SparseCategoricalCrossentropy()
 
 model.compile(optimizer = opt, loss = loss_fn, metrics = ['accuracy'])
+```
+:::
 
+:::{.cell .code}
+```
 try:
     monitor.begin_window("test")
 # if the last measurement window is still running
@@ -126,26 +140,11 @@ Then, when you call `model.fit()`, you will add the `TrainToAccuracy` callback a
 :::{.cell .code}
 ```
 # TODO - write a callback function
-class TrainToAccuracy(callbacks.Callback):
-
-    def __init__(self, threshold=0.9, patience=3):
-        self.threshold = threshold  # the desired accuracy threshold
-        self.patience = patience # how many epochs to wait once hitting the threshold
-        self.last_change_epoch = -1
-
-    def on_epoch_end(self, epoch, logs=None):
-        current_acc = logs.get("val_accuracy")
-        if(current_acc>self.threshold):
-          if(epoch - self.last_change_epoch>=self.patience):
-            self.model.stop_training = True
-        else:
-          self.last_change_epoch = epoch
-        return
 ```
 :::
 
 :::{.cell}
-Try it! run the following cell to test your `TrainToAccuracy` callback. (This will just continue fitting whatever `model` is currently in scope.)
+Try it! run the following cell to test your `TrainToAccuracy` callback. 
 :::
 
 :::{.cell .code}
@@ -164,7 +163,11 @@ Note that since we are now using the validation set performance to *decide* when
 :::{.cell}
 ### See how TTA/ETA varies with learning rate, batch size
 
-Now, you will repeat your model preparation and fitting code - with your new `TrainToAccuracy` callback - but in a loop. First, you will iterate over different learning rates.
+Now, you will repeat your model preparation and fitting code - with your new `TrainToAccuracy` callback - but in a loop. First, you will iterate over different learning rates. Consider the following learning rates for this experiment.
+
+```python
+[0.0001, 0.001, 0.01, 0.1]
+```
 
 In each iteration of each loop, you will prepare a model (with the appropriate training hyperparameters) and train it until:
 
@@ -180,7 +183,7 @@ For each model, you will record:
 -   the training hyperparameters (learning rate, batch size)
 -   the number of epochs of training needed to achieve the target validation accuracy
 -   the accuracy on the *test* data (not the validation data!). After fitting the model, use `model.evaluate` and pass the scaled *test* data to get the test loss and test accuracy
--   **GPU runtime**: the GPU energy and time to train the model to the desired validation accuracy, as computed by a `zeus-ml` measurement window that starts just before `model.fit` and ends just after `model.fit`.
+-   The GPU energy and time to train the model to the desired validation accuracy, as computed by a `zeus-ml` measurement window that starts just before `model.fit` and ends just after `model.fit`.
 :::
 
 :::{.cell .code}
@@ -191,18 +194,9 @@ For each model, you will record:
 # default learning rate and batch size -
 batch_size = 128
 
-acc_metric = tf.keras.metrics.SparseCategoricalAccuracy()
 metrics_vs_lr = []
 for lr in [0.0001, 0.001, 0.01, 0.1]:
     # TODO - set up model, including appropriate optimizer hyperparameters
-    
-    model_test = Sequential()
-    model_test.add(Input((Xtr_scale.shape[1],)))
-    model_test.add(Dense(nh, activation = 'sigmoid'))
-    model_test.add(Dense(len(np.unique(ytr)), activation = 'softmax'))
-
-    opt = optimizers.Adam(learning_rate=lr)
-    model_test.compile(optimizer = opt, loss = loss_fn, metrics = ['accuracy'])
 
     # start measurement
     try:
@@ -217,28 +211,24 @@ for lr in [0.0001, 0.001, 0.01, 0.1]:
     # until specified validation accuracy is achieved (don't use test data!)
     # but stop after 500 epochs even if validation accuracy is not achieved
 
-    hist_test = model_test.fit(Xtr_scale,ytr, batch_size = batch_size, epochs=500,
-                               validation_split = 0.2, callbacks=[TrainToAccuracy(threshold=0.98, patience=3)])
 
     # end measurement
     measurement = monitor.end_window("model_train")
 
     # TODO - evaluate model on (scaled) test data
 
-    test_acc = acc_metric(yts,model_test.predict(Xts_scale))
 
     # save results in a dictionary
     model_metrics = {
-       'batch_size': batch_size,
-       'learning_rate': lr,
-       'epochs': len(hist_test.history['loss']),
-       'test_accuracy': test_acc,
-       'total_energy': measurement.total_energy, # if on GPU runtime
-       'train_time': measurement.time
+       'batch_size': ,
+       'learning_rate': ,
+       'epochs': ,
+       'test_accuracy': ,
+       'total_energy': ,
+       'train_time': 
     }
 
     # TODO - append model_metrics dictionary to the metrics_vs_lr list
-    metrics_vs_lr.append(model_metrics)
 ```
 :::
 
@@ -251,38 +241,6 @@ Create a figure with four subplots. In each subplot, create a bar plot with lear
 :::{.cell .code}
 ```
 # TODO - visualize effect of varying learning rate, when training to a target accuracy
-plt.figure(figsize = (9,5))
-
-lr = [_['learning_rate'] for _ in metrics_vs_lr]
-
-plt.subplot(2,2,1)
-time_ = [_['train_time'] for _ in metrics_vs_lr]
-
-sns.barplot(x=lr, y=time_)
-plt.xlabel('LR');
-plt.ylabel('Train time')
-
-plt.subplot(2,2,2)
-energy_ = [_['total_energy'] for _ in metrics_vs_lr]
-
-sns.barplot(x=lr, y=energy_)
-plt.xlabel('LR');
-plt.ylabel('Total Energy')
-
-plt.subplot(2,2,3)
-test_acc_ = [_['test_accuracy'].cpu().numpy() for _ in metrics_vs_lr]
-
-sns.barplot(x=lr, y=test_acc_)
-plt.xlabel('LR');
-plt.ylabel('Test Accuracy')
-
-plt.subplot(2,2,4)
-nepochs_ = [_['epochs'] for _ in metrics_vs_lr]
-
-sns.barplot(x=lr, y=nepochs_)
-plt.xlabel('LR');
-plt.ylabel('Num Epochs')
-plt.tight_layout()
 ```
 :::
 
@@ -292,15 +250,11 @@ plt.tight_layout()
 :::
 
 :::{.cell}
-**Comment**
-Effect of LR:
+Now, you will repeat, with a loop over different batch sizes. Consider the following batch sizes - 
 
-* Training time: If the LR is too high, the model does not converge, and the training process stops after hitting the maximum number of iterations. Hence the training time is the highest for these cases. When LR is very low, the convergence occurs very slowly. So the time taken is relatively higher than the case when the LR is ideal.
-* Energy: Same trend as time. More the time, the higher the energy .
-* Test accuracy: If the model converges, the test accuracy reaches the maximum (for LR in {.0001,.001,.01}. For very high LRs, the model does not converge hence the test accuracy is lower.
-* Num epochs: Same trend as time since the batch size is the same.
-
-Now, you will repeat, with a loop over different batch sizes -
+```python
+[64, 128, 256, 512, 1024, 2048, 4096, 8192]
+```
 :::
 
 :::{.cell .code}
@@ -310,19 +264,11 @@ Now, you will repeat, with a loop over different batch sizes -
 # default learning rate and batch size -
 lr = 0.001
 batch_size = 128
-
 metrics_vs_bs = []
+
 for batch_size in [64, 128, 256, 512, 1024, 2048, 4096, 8192]:
 
     # TODO - set up model, including appropriate optimizer hyperparameters
-    
-    model_test = Sequential()
-    model_test.add(Input((Xtr_scale.shape[1],)))
-    model_test.add(Dense(nh, activation = 'sigmoid'))
-    model_test.add(Dense(len(np.unique(ytr)), activation = 'softmax'))
-
-    opt = optimizers.Adam(learning_rate=lr)
-    model_test.compile(optimizer = opt, loss = loss_fn, metrics = ['accuracy'])
 
     # start measurement
     try:
@@ -337,28 +283,22 @@ for batch_size in [64, 128, 256, 512, 1024, 2048, 4096, 8192]:
     # until specified validation accuracy is achieved (don't use test data!)
     # but stop after 500 epochs even if validation accuracy is not achieved
 
-    hist_test = model_test.fit(Xtr_scale,ytr, batch_size = batch_size, epochs=500,
-                               validation_split = 0.2, callbacks=[TrainToAccuracy(threshold=0.98, patience=3)])
-
     # end measurement
     measurement = monitor.end_window("model_train")
 
     # TODO - evaluate model on (scaled) test data
 
-    test_acc = acc_metric(yts,model_test.predict(Xts_scale))
-
     # save results in a dictionary
     model_metrics = {
-       'batch_size': batch_size,
-       'learning_rate': lr,
-       'epochs': len(hist_test.history['loss']),
-       'test_accuracy': test_acc,
-       'total_energy': measurement.total_energy, # if on GPU runtime
-       'train_time': measurement.time
+       'batch_size': ,
+       'learning_rate': ,
+       'epochs': ,
+       'test_accuracy': ,
+       'total_energy': ,
+       'train_time': 
     }
 
-    # TODO - append model_metrics dictionary to the metrics_vs_lr list
-    metrics_vs_bs.append(model_metrics)
+    # TODO - append model_metrics dictionary to the metrics_vs_bs list
 ```
 :::
 
@@ -371,37 +311,7 @@ Create a figure with four subplots. In each subplot, create a bar plot with batc
 :::{.cell .code}
 ```
 # TODO - visualize effect of varying batch size, when training to a target accuracy
-plt.figure(figsize = (9,5))
-batch_ls = [_['batch_size'] for _ in metrics_vs_bs]
 
-plt.subplot(2,2,1)
-time_ = [_['train_time'] for _ in metrics_vs_bs]
-
-sns.barplot(x=batch_ls, y=time_)
-plt.xlabel('Batch Size');
-plt.ylabel('Train time')
-
-plt.subplot(2,2,2)
-energy_ = [_['total_energy'] for _ in metrics_vs_bs]
-
-sns.barplot(x=batch_ls, y=energy_)
-plt.xlabel('Batch Size');
-plt.ylabel('Total Energy')
-
-plt.subplot(2,2,3)
-test_acc_ = [_['test_accuracy'].cpu().numpy() for _ in metrics_vs_bs]
-
-sns.barplot(x=batch_ls, y=test_acc_)
-plt.xlabel('Batch Size');
-plt.ylabel('Test Accuracy')
-
-plt.subplot(2,2,4)
-nepochs_ = [_['epochs'] for _ in metrics_vs_bs]
-
-sns.barplot(x=batch_ls, y=nepochs_)
-plt.xlabel('Batch Size');
-plt.ylabel('Num Epochs')
-plt.tight_layout()
 ```
 :::
 
