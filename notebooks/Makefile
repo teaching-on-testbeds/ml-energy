@@ -6,7 +6,7 @@ all: $(NOTEBOOKS)
 clean:
 	rm -f $(NOTEBOOKS)
 
-%.ipynb:	%.md
-	pandoc --wrap=none -i $< -o $@
+%.ipynb: %.md front-matter.md
+	pandoc --wrap=none -i front-matter.md $< -o $@
 	
 
